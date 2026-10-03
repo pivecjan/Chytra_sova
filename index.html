@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chytrá sova - Školní kvízy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+<header class="bg-white shadow-sm border-b-4 border-blue-300 sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
+        <button id="btn-back" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl transition-colors font-bold text-xl h-12 w-12 flex items-center justify-center shadow-sm" aria-label="Zpět">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 id="btn-home" class="text-2xl sm:text-3xl font-black text-blue-600 cursor-pointer flex items-center gap-2" tabindex="0">
+            <i class="fas fa-owl text-orange-500"></i> Chytrá sova
+        </h1>
+    </div>
+</header>
+
+<main class="flex-grow w-full max-w-4xl mx-auto px-4 py-8 relative">
+    <div id="screen-home" class="screen active">
+        <h2 class="text-3xl sm:text-4xl font-black text-center mb-10 text-slate-700">Do jaké chodíš třídy?</h2>
+        <div id="grades-container" class="grid grid-cols-1 sm:grid-cols-3 gap-6"></div>
+
+        <section class="mt-10 max-w-2xl mx-auto bg-white rounded-3xl p-6 border-2 border-slate-100 shadow-sm">
+            <h3 class="text-xl font-black text-slate-700 mb-4"><i class="fas fa-clock-rotate-left mr-2 text-blue-500"></i>Poslední výsledky</h3>
+            <ul id="results-history" class="space-y-3 text-sm"></ul>
+            <p id="results-history-empty" class="text-slate-500 font-bold">Zatím tu nejsou žádné výsledky.</p>
+        </section>
+    </div>
+
+    <div id="screen-wip" class="screen">
+        <div class="bg-white rounded-[3rem] p-10 text-center max-w-lg mx-auto shadow-xl border-4 border-dashed border-slate-300 mt-10">
+            <div class="text-7xl mb-6 animate-bounce">🚧</div>
+            <h2 class="text-3xl font-black text-slate-800 mb-4">Pracujeme na tom!</h2>
+            <p class="text-lg font-bold text-slate-500 mb-8">Tuto část pro tebe teprve chystáme.</p>
+            <button id="btn-wip-back" class="bg-blue-500 hover:bg-blue-600 text-white font-black text-xl py-4 px-8 rounded-full shadow-[0_5px_0_0_#2563eb] hover:translate-y-[3px] hover:shadow-[0_2px_0_0_#2563eb] transition-all">Zpět</button>
+        </div>
+    </div>
+
+    <div id="screen-subjects" class="screen">
+        <h2 id="subjects-title" class="text-3xl sm:text-4xl font-black text-center mb-10 text-slate-700">Co budeme cvičit?</h2>
+        <div id="subjects-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto"></div>
+    </div>
+
+    <div id="screen-topics" class="screen">
+        <h2 id="topics-title" class="text-3xl sm:text-4xl font-black text-center mb-10 text-slate-700">Vyber si téma</h2>
+        <div id="topics-container" class="grid grid-cols-1 gap-4 max-w-2xl mx-auto"></div>
+    </div>
+
+    <div id="screen-quiz" class="screen">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-slate-100 max-w-3xl mx-auto">
+            <div class="bg-blue-600 p-4 flex justify-between items-center text-white">
+                <span id="quiz-topic-title" class="font-black"></span>
+                <div id="quiz-progress-text" class="bg-blue-800 px-4 py-1 rounded-full font-black text-sm"></div>
+            </div>
+            <div class="h-3 bg-blue-100 w-full">
+                <div id="quiz-progress-bar" class="h-full bg-yellow-400 transition-all duration-300 rounded-r-full"></div>
+            </div>
+
+            <div class="p-6 sm:p-10">
+                <h2 id="question-text" class="text-2xl sm:text-3xl font-black text-slate-800 mb-8 text-center leading-tight"></h2>
+                <div id="options-container" class="space-y-4"></div>
+                <div id="quiz-warning" class="hidden mt-6 text-center text-red-600 font-bold bg-red-100 py-3 rounded-xl border border-red-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Vyber nebo zadej odpověď!
+                </div>
+                <div id="quiz-feedback" class="hidden mt-6 p-5 rounded-2xl border-4 text-lg font-black flex items-center gap-4">
+                    <div id="feedback-icon" class="text-4xl flex-shrink-0"></div>
+                    <div class="flex-grow">
+                        <div id="feedback-message" class="text-2xl mb-1"></div>
+                        <div id="feedback-correction" class="text-base opacity-90 hidden mt-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-6 border-t-2 border-slate-100 flex justify-center gap-3">
+                <button id="btn-check" class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-black text-xl py-4 px-12 rounded-full shadow-[0_5px_0_0_#2563eb] hover:translate-y-[3px] hover:shadow-[0_2px_0_0_#2563eb] transition-all">Zkontrolovat</button>
+                <button id="btn-next" class="hidden w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-black text-xl py-4 px-12 rounded-full shadow-[0_5px_0_0_#16a34a] hover:translate-y-[3px] hover:shadow-[0_2px_0_0_#16a34a] transition-all">Další otázka <i class="fas fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-results" class="screen">
+        <div class="bg-white rounded-3xl shadow-xl p-8 sm:p-12 border-2 border-slate-100 max-w-3xl mx-auto text-center">
+            <div id="res-icon" class="text-8xl mb-4"></div>
+            <h2 id="res-score" class="text-4xl sm:text-5xl font-black text-slate-800 mb-2"></h2>
+            <p id="res-msg" class="text-xl font-bold text-slate-500 mb-8"></p>
+            <div id="mistakes-container" class="hidden text-left bg-red-50 p-6 rounded-2xl border-2 border-red-100 mb-8">
+                <h3 class="text-xl font-black text-red-700 mb-4"><i class="fas fa-search mr-2"></i>Kde se vloudila chybička:</h3>
+                <ul id="mistakes-list" class="space-y-4"></ul>
+            </div>
+            <button id="btn-results-home" class="bg-blue-500 hover:bg-blue-600 text-white font-black text-lg py-4 px-10 rounded-full shadow-[0_5px_0_0_#2563eb] hover:translate-y-[3px] hover:shadow-[0_2px_0_0_#2563eb] transition-all"><i class="fas fa-home mr-2"></i>Zpět na začátek</button>
+        </div>
+    </div>
+</main>
+
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

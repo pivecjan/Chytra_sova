@@ -1,0 +1,56 @@
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f0f9ff;
+    background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+    background-size: 30px 30px;
+}
+
+.kid-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.kid-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.kid-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.screen {
+    display: none;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.selected-option {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff !important;
+    color: #1e3a8a !important;
+}
+
+.selected-option-multi {
+    border-color: #8b5cf6 !important;
+    background-color: #f5f3ff !important;
+}
+
+.custom-checkbox-checked {
+    background-color: #8b5cf6;
+    border-color: #8b5cf6;
+}
+
+.disabled-element {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
