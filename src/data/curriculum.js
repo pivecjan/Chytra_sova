@@ -37,6 +37,22 @@ export const curriculum = {
                     ]
                 },
                 {
+                    id: 'en',
+                    label: 'Angličtina',
+                    icon: '🇬🇧',
+                    color: 'indigo',
+                    available: true,
+                    topics: [
+                        {
+                            id: 'numbers-1-20',
+                            title: 'Čísla 1 až 20',
+                            subtitle: 'Procvič si psaní čísel anglicky',
+                            icon: 'fa-language',
+                            questionSetId: 'en-3-numbers-1-20'
+                        }
+                    ]
+                },
+                {
                     id: 'math',
                     label: 'Matematika',
                     icon: '🧮',

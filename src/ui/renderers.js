@@ -70,7 +70,7 @@ export function renderQuestion(container, question, onSingle, onMultiple, onText
         input.id = 'quiz-input';
         input.type = 'text';
         input.className = 'w-full max-w-sm mx-auto block text-center text-3xl font-black text-slate-800 bg-white border-4 border-slate-200 p-4 rounded-2xl focus:outline-none focus:border-blue-500 transition-colors';
-        input.placeholder = 'Napiš i/y/í/ý...';
+        input.placeholder = 'Napiš odpověď...';
         input.autocomplete = 'off';
         input.addEventListener('input', (event) => onText(event.target.value));
         container.appendChild(input);
