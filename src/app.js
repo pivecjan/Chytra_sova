@@ -125,7 +125,7 @@ function saveProgress() {
 
 function startQuiz(topic) {
     const questionSet = getQuestionSet(topic.questionSetId);
-    if (!validateQuestionSet(questionSet)) {
+    if (!validateQuestionSet(questionSet, topic.questionSetId)) {
         throw new Error(`Neplatná sada otázek: ${topic.questionSetId}`);
     }
 

@@ -1,3 +1,16 @@
+const ENGLISH_NUMBERS_1_TO_20 = [
+    'one', 'two', 'three', 'four', 'five',
+    'six', 'seven', 'eight', 'nine', 'ten',
+    'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+    'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'
+];
+
+const englishNumbersQuestionSet = ENGLISH_NUMBERS_1_TO_20.map((word, index) => ({
+    type: 'text',
+    text: `Napiš číslo ${index + 1} anglicky.`,
+    correct: word
+}));
+
 const rawQuestionBanks = {
     'cs-3-hard-soft': [
         { type: 'single', text: 'Která z uvedených souhlásek je tvrdá?', options: ['k', 'č', 'š', 'c'], correct: 'k' },
@@ -50,7 +63,8 @@ const rawQuestionBanks = {
         { type: 'text', text: 'Doplň chybějící písmeno do slova: k__tka', correct: 'y' },
         { type: 'truefalse', text: 'Souhlásky d, t, n jsou tvrdé, a proto se po nich v českých slovech píše tvrdé y/ý.', correct: 'true' },
         { type: 'truefalse', text: 'Po hlásce "j" se většinou píše tvrdé y/ý.', correct: 'false' }
-    ]
+    ],
+    'en-3-numbers-1-20': englishNumbersQuestionSet
 };
 
 function normalizeQuestion(question, index) {
@@ -68,24 +82,47 @@ export function getQuestionSet(setId) {
     return questionSet.map((question, index) => normalizeQuestion(question, index));
 }
 
-export function validateQuestionSet(questionSet) {
-    return questionSet.every((question) => {
-        if (!question.id || !question.type || !question.prompt) {
-            return false;
-        }
-
-        if (question.type === 'single' || question.type === 'multiple') {
-            return Array.isArray(question.options) && question.options.length > 0;
-        }
-
-        if (question.type === 'truefalse') {
-            return ['true', 'false'].includes(question.correct);
-        }
-
-        if (question.type === 'text') {
-            return typeof question.correct === 'string';
-        }
-
+function validateQuestion(question) {
+    if (!question.id || !question.type || !question.prompt) {
         return false;
-    });
+    }
+
+    if (question.type === 'single' || question.type === 'multiple') {
+        return Array.isArray(question.options) && question.options.length > 0;
+    }
+
+    if (question.type === 'truefalse') {
+        return ['true', 'false'].includes(question.correct);
+    }
+
+    if (question.type === 'text') {
+        return typeof question.correct === 'string' && question.correct.trim().length > 0;
+    }
+
+    return false;
+}
+
+function validateEnglishNumbersSet(questionSet) {
+    if (questionSet.length !== ENGLISH_NUMBERS_1_TO_20.length) {
+        return false;
+    }
+
+    return questionSet.every((question, index) => (
+        question.type === 'text'
+        && question.correct === ENGLISH_NUMBERS_1_TO_20[index]
+    ));
+}
+
+export function validateQuestionSet(questionSet, setId = null) {
+    const hasValidQuestions = questionSet.every((question) => validateQuestion(question));
+
+    if (!hasValidQuestions) {
+        return false;
+    }
+
+    if (setId === 'en-3-numbers-1-20') {
+        return validateEnglishNumbersSet(questionSet);
+    }
+
+    return true;
 }
