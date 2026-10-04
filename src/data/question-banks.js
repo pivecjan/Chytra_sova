@@ -103,7 +103,7 @@ const rawQuestionBanks = {
     ],
     'cs-3-paired-consonants': [
         { type: 'text', text: 'Doplň správnou souhlásku (b/p): du_', correct: 'b' },
-        { type: 'single', text: 'Vyber správně napsané slovo (d/t):', options: ['let', 'led'], correct: 'led' },
+        { type: 'single', text: 'Vyber správně napsané slovo pro zmrzlou vodu (d/t):', options: ['let', 'led'], correct: 'led' },
         { type: 'text', text: 'Doplň správnou souhlásku (ď/ť): lo_', correct: 'ď' },
         { type: 'single', text: 'Vyber správně napsané slovo (z/s):', options: ['obras', 'obraz'], correct: 'obraz' },
         { type: 'text', text: 'Doplň správnou souhlásku (ž/š): nů_', correct: 'ž' },
