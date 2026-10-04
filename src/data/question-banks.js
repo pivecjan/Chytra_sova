@@ -17,7 +17,35 @@ const ENGLISH_SCHOOL_SUPPLIES = [
     { cz: 'ořezávátko', en: 'sharpener' },
     { cz: 'pastelky', en: 'crayons' },
     { cz: 'nůžky', en: 'scissors' },
-    { cz: 'lepidlo', en: 'glue' }
+    { cz: 'lepidlo', en: 'glue' },
+    { cz: 'školní lavice', en: 'desk' },
+    { cz: 'židle', en: 'chair' },
+    { cz: 'kalkulačka', en: 'calculator' },
+    { cz: 'učebnice', en: 'textbook' },
+    { cz: 'pracovní sešit', en: 'workbook' },
+    { cz: 'pastelka', en: 'coloured pencil' }
+];
+
+const MULTIPLICATION_0_10_BY_0_10_FACTORS = [
+    ...Array.from({ length: 11 }, (_, second) => [0, second]),
+    ...Array.from({ length: 11 }, (_, second) => [1, second]),
+    ...Array.from({ length: 11 }, (_, second) => [10, second]),
+    [2, 3], [2, 5], [2, 10],
+    [3, 2], [3, 7],
+    [4, 3], [4, 8],
+    [5, 4], [5, 9],
+    [6, 3], [6, 8],
+    [7, 2], [7, 6],
+    [8, 4], [8, 7],
+    [9, 3], [9, 5]
+];
+
+const MULTIPLICATION_0_10_BY_10_20_FACTORS = [
+    ...Array.from({ length: 11 }, (_, first) => [first, 10]),
+    ...Array.from({ length: 11 }, (_, first) => [first, 20]),
+    ...Array.from({ length: 11 }, (_, first) => [first, 15]),
+    [0, 18], [1, 12], [2, 14], [3, 16], [4, 11], [5, 13], [6, 17], [7, 19], [8, 12], [9, 14], [10, 18],
+    [2, 19], [3, 11], [4, 18], [6, 12], [8, 16], [9, 17]
 ];
 
 const englishNumbersQuestionSet = ENGLISH_NUMBERS_1_TO_20.map((word, index) => ({
@@ -32,20 +60,12 @@ const englishSchoolSuppliesQuestionSet = ENGLISH_SCHOOL_SUPPLIES.map((item) => (
     correct: item.en
 }));
 
-function createMultiplicationQuestionSet(minA, maxA, minB, maxB) {
-    const questions = [];
-
-    for (let first = minA; first <= maxA; first += 1) {
-        for (let second = minB; second <= maxB; second += 1) {
-            questions.push({
-                type: 'number',
-                text: `Vypočítej: ${first} × ${second}`,
-                correct: first * second
-            });
-        }
-    }
-
-    return questions;
+function createMultiplicationQuestionSet(factors) {
+    return factors.map(([first, second]) => ({
+        type: 'number',
+        text: `Vypočítej: ${first} × ${second}`,
+        correct: first * second
+    }));
 }
 
 const rawQuestionBanks = {
@@ -102,25 +122,59 @@ const rawQuestionBanks = {
         { type: 'truefalse', text: 'Po hlásce "j" se většinou píše tvrdé y/ý.', correct: 'false' }
     ],
     'cs-3-paired-consonants': [
-        { type: 'text', text: 'Doplň správnou souhlásku (b/p): du_', correct: 'b' },
-        { type: 'single', text: 'Vyber správně napsané slovo pro zmrzlou vodu (d/t):', options: ['let', 'led'], correct: 'led' },
-        { type: 'text', text: 'Doplň správnou souhlásku (ď/ť): lo_', correct: 'ď' },
-        { type: 'single', text: 'Vyber správně napsané slovo (z/s):', options: ['obras', 'obraz'], correct: 'obraz' },
-        { type: 'text', text: 'Doplň správnou souhlásku (ž/š): nů_', correct: 'ž' },
-        { type: 'single', text: 'Vyber správně napsané slovo (v/f):', options: ['lef', 'lev'], correct: 'lev' },
-        { type: 'single', text: 'Vyber správně napsané slovo (h/ch):', options: ['sních', 'sníh'], correct: 'sníh' },
-        { type: 'single', text: 'Která souhláska doplní slovo du_?', options: ['b', 'p'], correct: 'b' },
-        { type: 'single', text: 'Která souhláska doplní slovo le_?', options: ['d', 't'], correct: 'd' },
-        { type: 'single', text: 'Která souhláska doplní slovo lo_?', options: ['ď', 'ť'], correct: 'ď' },
-        { type: 'single', text: 'Která souhláska doplní slovo obra_?', options: ['z', 's'], correct: 'z' },
-        { type: 'single', text: 'Která souhláska doplní slovo nů_?', options: ['ž', 'š'], correct: 'ž' },
-        { type: 'single', text: 'Která souhláska doplní slovo le_?', options: ['v', 'f'], correct: 'v' },
-        { type: 'single', text: 'Která souhláska doplní slovo sní_?', options: ['h', 'ch'], correct: 'h' }
+        { type: 'text', text: 'Doplň správnou souhlásku (b/p): du_ (pomůcka: duby)', correct: 'b' },
+        { type: 'single', text: 'Vyber správně napsané slovo (b/p):', options: ['zub', 'zup'], correct: 'zub' },
+        { type: 'text', text: 'Doplň správnou souhlásku (b/p): chlu_ (pomůcka: chlupy)', correct: 'p' },
+        { type: 'single', text: 'Vyber správně napsané slovo (b/p):', options: ['strob', 'strop'], correct: 'strop' },
+        { type: 'single', text: 'Která souhláska doplní slovo zu_?', options: ['b', 'p'], correct: 'b' },
+        { type: 'single', text: 'Která souhláska doplní slovo chlu_?', options: ['b', 'p'], correct: 'p' },
+
+        { type: 'text', text: 'Doplň správnou souhlásku (d/t): le_ (pomůcka: ledy)', correct: 'd' },
+        { type: 'single', text: 'Vyber správně napsané slovo (d/t):', options: ['hrat', 'hrad'], correct: 'hrad' },
+        { type: 'text', text: 'Doplň správnou souhlásku (d/t): plo_ (pomůcka: ploty)', correct: 't' },
+        { type: 'single', text: 'Vyber správně napsané slovo (d/t):', options: ['svět', 'svěd'], correct: 'svět' },
+        { type: 'single', text: 'Která souhláska doplní slovo hra_?', options: ['d', 't'], correct: 'd' },
+        { type: 'single', text: 'Která souhláska doplní slovo plo_?', options: ['d', 't'], correct: 't' },
+
+        { type: 'text', text: 'Doplň správnou souhlásku (ď/ť): lo_ (pomůcka: lodě)', correct: 'ď' },
+        { type: 'single', text: 'Vyber správně napsané slovo (ď/ť):', options: ['zeď', 'zeť'], correct: 'zeď' },
+        { type: 'text', text: 'Doplň správnou souhlásku (ď/ť): sí_ (pomůcka: sítě)', correct: 'ť' },
+        { type: 'single', text: 'Vyber správně napsané slovo (ď/ť):', options: ['naď', 'nať'], correct: 'nať' },
+        { type: 'single', text: 'Která souhláska doplní slovo hru_?', options: ['ď', 'ť'], correct: 'ď' },
+        { type: 'single', text: 'Která souhláska doplní slovo chu_?', options: ['ď', 'ť'], correct: 'ť' },
+
+        { type: 'text', text: 'Doplň správnou souhlásku (z/s): obra_ (pomůcka: obrazy)', correct: 'z' },
+        { type: 'single', text: 'Vyber správně napsané slovo (z/s):', options: ['mras', 'mráz'], correct: 'mráz' },
+        { type: 'text', text: 'Doplň správnou souhlásku (z/s): hla_ (pomůcka: hlasy)', correct: 's' },
+        { type: 'single', text: 'Vyber správně napsané slovo (z/s):', options: ['provaz', 'provas'], correct: 'provaz' },
+        { type: 'single', text: 'Která souhláska doplní slovo vla_?', options: ['z', 's'], correct: 's' },
+        { type: 'single', text: 'Která souhláska doplní slovo mrá_?', options: ['z', 's'], correct: 'z' },
+
+        { type: 'text', text: 'Doplň správnou souhlásku (ž/š): nů_ (pomůcka: nože)', correct: 'ž' },
+        { type: 'single', text: 'Vyber správně napsané slovo (ž/š):', options: ['kříž', 'kříš'], correct: 'kříž' },
+        { type: 'text', text: 'Doplň správnou souhlásku (ž/š): ko_ (pomůcka: koše)', correct: 'š' },
+        { type: 'single', text: 'Vyber správně napsané slovo (ž/š):', options: ['myž', 'myš'], correct: 'myš' },
+        { type: 'single', text: 'Která souhláska doplní slovo no_?', options: ['ž', 'š'], correct: 'ž' },
+        { type: 'single', text: 'Která souhláska doplní slovo ko_?', options: ['ž', 'š'], correct: 'š' },
+
+        { type: 'text', text: 'Doplň správnou souhlásku (v/f): le_ (pomůcka: lvi)', correct: 'v' },
+        { type: 'single', text: 'Vyber správně napsané slovo (v/f):', options: ['mrav', 'mraf'], correct: 'mrav' },
+        { type: 'text', text: 'Doplň správnou souhlásku (v/f): ku_ (pomůcka: kufry)', correct: 'f' },
+        { type: 'single', text: 'Vyber správně napsané slovo (v/f):', options: ['zpěf', 'zpěv'], correct: 'zpěv' },
+        { type: 'single', text: 'Která souhláska doplní slovo mra_?', options: ['v', 'f'], correct: 'v' },
+        { type: 'single', text: 'Která souhláska doplní slovo ku_?', options: ['v', 'f'], correct: 'f' },
+
+        { type: 'text', text: 'Doplň správnou souhlásku (h/ch): sní_ (pomůcka: sněhu)', correct: 'h' },
+        { type: 'single', text: 'Vyber správně napsané slovo (h/ch):', options: ['břeh', 'břech'], correct: 'břeh' },
+        { type: 'text', text: 'Doplň správnou souhlásku (h/ch): vr_ (pomůcka: vrchy)', correct: 'ch' },
+        { type: 'single', text: 'Vyber správně napsané slovo (h/ch):', options: ['prách', 'práh'], correct: 'práh' },
+        { type: 'single', text: 'Která souhláska doplní slovo me_?', options: ['h', 'ch'], correct: 'ch' },
+        { type: 'single', text: 'Která souhláska doplní slovo sně_?', options: ['h', 'ch'], correct: 'h' }
     ],
     'en-3-numbers-1-20': englishNumbersQuestionSet,
     'en-3-school-supplies': englishSchoolSuppliesQuestionSet,
-    'math-3-multiplication-0-10-by-0-10': createMultiplicationQuestionSet(0, 10, 0, 10),
-    'math-3-multiplication-0-10-by-10-20': createMultiplicationQuestionSet(0, 10, 10, 20)
+    'math-3-multiplication-0-10-by-0-10': createMultiplicationQuestionSet(MULTIPLICATION_0_10_BY_0_10_FACTORS),
+    'math-3-multiplication-0-10-by-10-20': createMultiplicationQuestionSet(MULTIPLICATION_0_10_BY_10_20_FACTORS)
 };
 
 function normalizeQuestion(question, index) {
@@ -162,6 +216,10 @@ function validateQuestion(question) {
     return false;
 }
 
+function hasUniquePrompts(questionSet) {
+    return new Set(questionSet.map((question) => question.prompt)).size === questionSet.length;
+}
+
 function validateEnglishNumbersSet(questionSet) {
     if (questionSet.length !== ENGLISH_NUMBERS_1_TO_20.length) {
         return false;
@@ -184,12 +242,18 @@ function validateEnglishSchoolSuppliesSet(questionSet) {
     ));
 }
 
-function validateMultiplicationSet(questionSet, minA, maxA, minB, maxB) {
-    const expected = createMultiplicationQuestionSet(minA, maxA, minB, maxB).map((question, index) => (
-        normalizeQuestion(question, index)
-    ));
+function validateMultiplicationSet(questionSet, factors, minA, maxA, minB, maxB) {
+    const expected = createMultiplicationQuestionSet(factors).map((question, index) => normalizeQuestion(question, index));
 
     if (questionSet.length !== expected.length) {
+        return false;
+    }
+
+    const hasRangeErrors = factors.some(([first, second]) => (
+        first < minA || first > maxA || second < minB || second > maxB
+    ));
+
+    if (hasRangeErrors) {
         return false;
     }
 
@@ -203,7 +267,7 @@ function validateMultiplicationSet(questionSet, minA, maxA, minB, maxB) {
 export function validateQuestionSet(questionSet, setId = null) {
     const hasValidQuestions = questionSet.every((question) => validateQuestion(question));
 
-    if (!hasValidQuestions) {
+    if (!hasValidQuestions || !hasUniquePrompts(questionSet)) {
         return false;
     }
 
@@ -216,11 +280,11 @@ export function validateQuestionSet(questionSet, setId = null) {
     }
 
     if (setId === 'math-3-multiplication-0-10-by-0-10') {
-        return validateMultiplicationSet(questionSet, 0, 10, 0, 10);
+        return validateMultiplicationSet(questionSet, MULTIPLICATION_0_10_BY_0_10_FACTORS, 0, 10, 0, 10);
     }
 
     if (setId === 'math-3-multiplication-0-10-by-10-20') {
-        return validateMultiplicationSet(questionSet, 0, 10, 10, 20);
+        return validateMultiplicationSet(questionSet, MULTIPLICATION_0_10_BY_10_20_FACTORS, 0, 10, 10, 20);
     }
 
     return true;

@@ -60,3 +60,30 @@ test('tracks mistakes for wrong multiple answers', () => {
     assert.equal(final.mistakes.length, 1);
     assert.match(final.mistakes[0].correctAns, /x/);
 });
+
+test('uses all questions when pool has fewer than 20 items', () => {
+    const questions = Array.from({ length: 7 }, (_, index) => ({
+        id: `q-${index}`,
+        type: 'single',
+        prompt: `Q${index}`,
+        options: ['a', 'b'],
+        correct: 'a'
+    }));
+
+    const engine = new QuizEngine(questions, 20);
+    assert.equal(engine.questions.length, 7);
+});
+
+test('selects max 20 non-repeating questions from larger pool', () => {
+    const questions = Array.from({ length: 50 }, (_, index) => ({
+        id: `q-${index}`,
+        type: 'single',
+        prompt: `Q${index}`,
+        options: ['a', 'b'],
+        correct: 'a'
+    }));
+
+    const engine = new QuizEngine(questions, 20);
+    assert.equal(engine.questions.length, 20);
+    assert.equal(new Set(engine.questions.map((question) => question.id)).size, 20);
+});

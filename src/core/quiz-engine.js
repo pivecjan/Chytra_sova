@@ -1,6 +1,12 @@
 function pickRandomSubset(items, limit) {
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(limit, items.length));
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled.slice(0, Math.min(limit, shuffled.length));
 }
 
 function normalizeText(value) {
