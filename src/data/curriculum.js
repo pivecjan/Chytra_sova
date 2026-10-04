@@ -33,6 +33,13 @@ export const curriculum = {
                             subtitle: 'Náhodný mix 20 otázek',
                             icon: 'fa-pencil-alt',
                             questionSetId: 'cs-3-hard-soft'
+                        },
+                        {
+                            id: 'paired-consonants',
+                            title: 'Párové souhlásky',
+                            subtitle: 'Doplňování a výběr správných slov',
+                            icon: 'fa-spell-check',
+                            questionSetId: 'cs-3-paired-consonants'
                         }
                     ]
                 },
@@ -49,6 +56,13 @@ export const curriculum = {
                             subtitle: 'Procvič si psaní čísel anglicky',
                             icon: 'fa-language',
                             questionSetId: 'en-3-numbers-1-20'
+                        },
+                        {
+                            id: 'school-supplies',
+                            title: 'Školní potřeby',
+                            subtitle: 'Přelož česká slovíčka do angličtiny',
+                            icon: 'fa-school',
+                            questionSetId: 'en-3-school-supplies'
                         }
                     ]
                 },
@@ -57,8 +71,23 @@ export const curriculum = {
                     label: 'Matematika',
                     icon: '🧮',
                     color: 'teal',
-                    available: false,
-                    topics: []
+                    available: true,
+                    topics: [
+                        {
+                            id: 'multiplication-0-10-by-0-10',
+                            title: 'Násobení 0–10 × 0–10',
+                            subtitle: 'Procvič si násobení v malé násobilce',
+                            icon: 'fa-times',
+                            questionSetId: 'math-3-multiplication-0-10-by-0-10'
+                        },
+                        {
+                            id: 'multiplication-0-10-by-10-20',
+                            title: 'Násobení 0–10 × 10–20',
+                            subtitle: 'Násobení s druhým činitelem od 10 do 20',
+                            icon: 'fa-calculator',
+                            questionSetId: 'math-3-multiplication-0-10-by-10-20'
+                        }
+                    ]
                 }
             ]
         }

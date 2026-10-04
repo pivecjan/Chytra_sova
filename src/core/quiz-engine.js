@@ -1,10 +1,25 @@
 function pickRandomSubset(items, limit) {
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(limit, items.length));
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled.slice(0, Math.min(limit, shuffled.length));
 }
 
 function normalizeText(value) {
-    return value.toString().trim().toLowerCase();
+    return value.toString().trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function parseIntegerAnswer(value) {
+    const normalized = value.toString().trim();
+    if (!/^-?\d+$/.test(normalized)) {
+        return null;
+    }
+
+    return Number(normalized);
 }
 
 export class QuizEngine {
@@ -60,6 +75,11 @@ export class QuizEngine {
             isCorrect = userText === correctText;
             displayCorrect = question.correct;
             userDisplay = userText;
+        } else if (question.type === 'number') {
+            const userNumber = parseIntegerAnswer(answer ?? '');
+            isCorrect = userNumber !== null && userNumber === question.correct;
+            displayCorrect = question.correct.toString();
+            userDisplay = answer?.toString().trim() ?? '';
         } else if (question.type === 'multiple') {
             const userArr = [...(answer ?? [])].sort((a, b) => a - b);
             const corrArr = [...question.correct].sort((a, b) => a - b);

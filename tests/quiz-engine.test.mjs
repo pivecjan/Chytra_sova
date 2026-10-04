@@ -23,6 +23,31 @@ test('normalizes text answers', () => {
     assert.equal(engine.getResults().score, 1);
 });
 
+test('normalizes extra spaces in text answers', () => {
+    const engine = new QuizEngine([
+        { id: 'q4', type: 'text', prompt: 'B', options: [], correct: 'pencil case' }
+    ], 1);
+
+    const result = engine.evaluate('  Pencil   Case  ');
+    assert.equal(result.isCorrect, true);
+});
+
+test('accepts only numeric answers for number questions', () => {
+    const engine = new QuizEngine([
+        { id: 'q5', type: 'number', prompt: 'B', options: [], correct: 48 }
+    ], 1);
+
+    const right = engine.evaluate(' 48 ');
+    assert.equal(right.isCorrect, true);
+
+    engine.currentIndex = 0;
+    engine.score = 0;
+    engine.mistakes = [];
+
+    const wrong = engine.evaluate('48a');
+    assert.equal(wrong.isCorrect, false);
+});
+
 test('tracks mistakes for wrong multiple answers', () => {
     const engine = new QuizEngine([
         { id: 'q3', type: 'multiple', prompt: 'C', options: ['x', 'y', 'z'], correct: [0, 2] }
@@ -34,4 +59,31 @@ test('tracks mistakes for wrong multiple answers', () => {
     const final = engine.getResults();
     assert.equal(final.mistakes.length, 1);
     assert.match(final.mistakes[0].correctAns, /x/);
+});
+
+test('uses all questions when pool has fewer than 20 items', () => {
+    const questions = Array.from({ length: 7 }, (_, index) => ({
+        id: `q-${index}`,
+        type: 'single',
+        prompt: `Q${index}`,
+        options: ['a', 'b'],
+        correct: 'a'
+    }));
+
+    const engine = new QuizEngine(questions, 20);
+    assert.equal(engine.questions.length, 7);
+});
+
+test('selects max 20 non-repeating questions from larger pool', () => {
+    const questions = Array.from({ length: 50 }, (_, index) => ({
+        id: `q-${index}`,
+        type: 'single',
+        prompt: `Q${index}`,
+        options: ['a', 'b'],
+        correct: 'a'
+    }));
+
+    const engine = new QuizEngine(questions, 20);
+    assert.equal(engine.questions.length, 20);
+    assert.equal(new Set(engine.questions.map((question) => question.id)).size, 20);
 });

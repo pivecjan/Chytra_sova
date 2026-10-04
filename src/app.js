@@ -232,7 +232,7 @@ function setFeedback(result) {
 }
 
 function lockQuestionInputs(questionType) {
-    if (questionType === 'text') {
+    if (questionType === 'text' || questionType === 'number') {
         const input = document.getElementById('quiz-input');
         if (input) {
             input.disabled = true;
