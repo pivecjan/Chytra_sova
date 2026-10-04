@@ -65,13 +65,16 @@ export function renderQuestion(container, question, onSingle, onMultiple, onText
             grid.appendChild(button);
         });
         container.appendChild(grid);
-    } else if (question.type === 'text') {
+    } else if (question.type === 'text' || question.type === 'number') {
         const input = document.createElement('input');
         input.id = 'quiz-input';
-        input.type = 'text';
+        input.type = question.type === 'number' ? 'number' : 'text';
         input.className = 'w-full max-w-sm mx-auto block text-center text-3xl font-black text-slate-800 bg-white border-4 border-slate-200 p-4 rounded-2xl focus:outline-none focus:border-blue-500 transition-colors';
-        input.placeholder = 'Napiš odpověď...';
+        input.placeholder = question.type === 'number' ? 'Napiš výsledek...' : 'Napiš odpověď...';
         input.autocomplete = 'off';
+        if (question.type === 'number') {
+            input.inputMode = 'numeric';
+        }
         input.addEventListener('input', (event) => onText(event.target.value));
         container.appendChild(input);
         setTimeout(() => input.focus(), 100);

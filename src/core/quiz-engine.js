@@ -4,7 +4,16 @@ function pickRandomSubset(items, limit) {
 }
 
 function normalizeText(value) {
-    return value.toString().trim().toLowerCase();
+    return value.toString().trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function parseIntegerAnswer(value) {
+    const normalized = value.toString().trim();
+    if (!/^-?\d+$/.test(normalized)) {
+        return null;
+    }
+
+    return Number(normalized);
 }
 
 export class QuizEngine {
@@ -60,6 +69,11 @@ export class QuizEngine {
             isCorrect = userText === correctText;
             displayCorrect = question.correct;
             userDisplay = userText;
+        } else if (question.type === 'number') {
+            const userNumber = parseIntegerAnswer(answer ?? '');
+            isCorrect = userNumber !== null && userNumber === question.correct;
+            displayCorrect = question.correct.toString();
+            userDisplay = answer?.toString().trim() ?? '';
         } else if (question.type === 'multiple') {
             const userArr = [...(answer ?? [])].sort((a, b) => a - b);
             const corrArr = [...question.correct].sort((a, b) => a - b);

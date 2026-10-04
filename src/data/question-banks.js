@@ -5,11 +5,48 @@ const ENGLISH_NUMBERS_1_TO_20 = [
     'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'
 ];
 
+const ENGLISH_SCHOOL_SUPPLIES = [
+    { cz: 'tužka', en: 'pencil' },
+    { cz: 'propiska', en: 'pen' },
+    { cz: 'pravítko', en: 'ruler' },
+    { cz: 'guma', en: 'eraser' },
+    { cz: 'penál', en: 'pencil case' },
+    { cz: 'školní batoh', en: 'schoolbag' },
+    { cz: 'kniha', en: 'book' },
+    { cz: 'sešit', en: 'notebook' },
+    { cz: 'ořezávátko', en: 'sharpener' },
+    { cz: 'pastelky', en: 'crayons' },
+    { cz: 'nůžky', en: 'scissors' },
+    { cz: 'lepidlo', en: 'glue' }
+];
+
 const englishNumbersQuestionSet = ENGLISH_NUMBERS_1_TO_20.map((word, index) => ({
     type: 'text',
     text: `Napiš číslo ${index + 1} anglicky.`,
     correct: word
 }));
+
+const englishSchoolSuppliesQuestionSet = ENGLISH_SCHOOL_SUPPLIES.map((item) => ({
+    type: 'text',
+    text: `Jak se anglicky řekne: "${item.cz}"?`,
+    correct: item.en
+}));
+
+function createMultiplicationQuestionSet(minA, maxA, minB, maxB) {
+    const questions = [];
+
+    for (let first = minA; first <= maxA; first += 1) {
+        for (let second = minB; second <= maxB; second += 1) {
+            questions.push({
+                type: 'number',
+                text: `Vypočítej: ${first} × ${second}`,
+                correct: first * second
+            });
+        }
+    }
+
+    return questions;
+}
 
 const rawQuestionBanks = {
     'cs-3-hard-soft': [
@@ -64,7 +101,26 @@ const rawQuestionBanks = {
         { type: 'truefalse', text: 'Souhlásky d, t, n jsou tvrdé, a proto se po nich v českých slovech píše tvrdé y/ý.', correct: 'true' },
         { type: 'truefalse', text: 'Po hlásce "j" se většinou píše tvrdé y/ý.', correct: 'false' }
     ],
-    'en-3-numbers-1-20': englishNumbersQuestionSet
+    'cs-3-paired-consonants': [
+        { type: 'text', text: 'Doplň správnou souhlásku (b/p): du_', correct: 'b' },
+        { type: 'single', text: 'Vyber správně napsané slovo (d/t):', options: ['let', 'led'], correct: 'led' },
+        { type: 'text', text: 'Doplň správnou souhlásku (ď/ť): lo_', correct: 'ď' },
+        { type: 'single', text: 'Vyber správně napsané slovo (z/s):', options: ['obras', 'obraz'], correct: 'obraz' },
+        { type: 'text', text: 'Doplň správnou souhlásku (ž/š): nů_', correct: 'ž' },
+        { type: 'single', text: 'Vyber správně napsané slovo (v/f):', options: ['lef', 'lev'], correct: 'lev' },
+        { type: 'single', text: 'Vyber správně napsané slovo (h/ch):', options: ['sních', 'sníh'], correct: 'sníh' },
+        { type: 'single', text: 'Která souhláska doplní slovo du_?', options: ['b', 'p'], correct: 'b' },
+        { type: 'single', text: 'Která souhláska doplní slovo le_?', options: ['d', 't'], correct: 'd' },
+        { type: 'single', text: 'Která souhláska doplní slovo lo_?', options: ['ď', 'ť'], correct: 'ď' },
+        { type: 'single', text: 'Která souhláska doplní slovo obra_?', options: ['z', 's'], correct: 'z' },
+        { type: 'single', text: 'Která souhláska doplní slovo nů_?', options: ['ž', 'š'], correct: 'ž' },
+        { type: 'single', text: 'Která souhláska doplní slovo le_?', options: ['v', 'f'], correct: 'v' },
+        { type: 'single', text: 'Která souhláska doplní slovo sní_?', options: ['h', 'ch'], correct: 'h' }
+    ],
+    'en-3-numbers-1-20': englishNumbersQuestionSet,
+    'en-3-school-supplies': englishSchoolSuppliesQuestionSet,
+    'math-3-multiplication-0-10-by-0-10': createMultiplicationQuestionSet(0, 10, 0, 10),
+    'math-3-multiplication-0-10-by-10-20': createMultiplicationQuestionSet(0, 10, 10, 20)
 };
 
 function normalizeQuestion(question, index) {
@@ -99,6 +155,10 @@ function validateQuestion(question) {
         return typeof question.correct === 'string' && question.correct.trim().length > 0;
     }
 
+    if (question.type === 'number') {
+        return typeof question.correct === 'number' && Number.isFinite(question.correct);
+    }
+
     return false;
 }
 
@@ -113,6 +173,33 @@ function validateEnglishNumbersSet(questionSet) {
     ));
 }
 
+function validateEnglishSchoolSuppliesSet(questionSet) {
+    if (questionSet.length !== ENGLISH_SCHOOL_SUPPLIES.length) {
+        return false;
+    }
+
+    return questionSet.every((question, index) => (
+        question.type === 'text'
+        && question.correct === ENGLISH_SCHOOL_SUPPLIES[index].en
+    ));
+}
+
+function validateMultiplicationSet(questionSet, minA, maxA, minB, maxB) {
+    const expected = createMultiplicationQuestionSet(minA, maxA, minB, maxB).map((question, index) => (
+        normalizeQuestion(question, index)
+    ));
+
+    if (questionSet.length !== expected.length) {
+        return false;
+    }
+
+    return questionSet.every((question, index) => (
+        question.type === 'number'
+        && question.prompt === expected[index].prompt
+        && question.correct === expected[index].correct
+    ));
+}
+
 export function validateQuestionSet(questionSet, setId = null) {
     const hasValidQuestions = questionSet.every((question) => validateQuestion(question));
 
@@ -122,6 +209,18 @@ export function validateQuestionSet(questionSet, setId = null) {
 
     if (setId === 'en-3-numbers-1-20') {
         return validateEnglishNumbersSet(questionSet);
+    }
+
+    if (setId === 'en-3-school-supplies') {
+        return validateEnglishSchoolSuppliesSet(questionSet);
+    }
+
+    if (setId === 'math-3-multiplication-0-10-by-0-10') {
+        return validateMultiplicationSet(questionSet, 0, 10, 0, 10);
+    }
+
+    if (setId === 'math-3-multiplication-0-10-by-10-20') {
+        return validateMultiplicationSet(questionSet, 0, 10, 10, 20);
     }
 
     return true;
